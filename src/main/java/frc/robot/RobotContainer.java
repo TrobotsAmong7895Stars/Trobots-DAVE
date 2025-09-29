@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
 import swervelib.SwerveInputStream;
 
@@ -162,11 +163,13 @@ public class RobotContainer
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
       driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.y().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
+      driverXbox.y().whileTrue(drivebase.driveToDistanceCommand(10.0, 0.2));
+      driverXbox.a().whileTrue(drivebase.aimAtTarget(Cameras.CENTER_CAM));
+      driverXbox.b().whileTrue(drivebase.driveToPose(new Pose2d(3.405, 2.497, Rotation2d.fromDegrees(5.194))));
       driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
-      driverXbox.leftBumper().onTrue(Commands.none());
-      driverXbox.rightBumper().onTrue(Commands.none());
+      driverXbox.leftBumper().whileTrue(drivebase.sysIdAngleMotorCommand());
+      driverXbox.rightBumper().whileTrue(drivebase.sysIdDriveMotorCommand());
     } else
     {
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
@@ -174,7 +177,7 @@ public class RobotContainer
       driverXbox.start().whileTrue(Commands.none());
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.rightBumper().onTrue(Commands.none());
+      driverXbox.rightBumper().whileTrue(Commands.none());
     }
 
   }
@@ -187,7 +190,7 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("The Donut");
+    return drivebase.getAutonomousCommand("Two-Point Auto");
   }
 
   public void setMotorBrake(boolean brake)
