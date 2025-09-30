@@ -164,7 +164,7 @@ public class RobotContainer
 
       driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.y().whileTrue(drivebase.driveToDistanceCommand(10.0, 0.2));
-      driverXbox.a().whileTrue(drivebase.aimAtTarget(Cameras.CENTER_CAM));
+      // driverXbox.a().whileTrue(drivebase.aimAtTarget(Cameras.CENTER_CAM));
       driverXbox.b().whileTrue(drivebase.driveToPose(new Pose2d(3.405, 2.497, Rotation2d.fromDegrees(5.194))));
       driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
