@@ -16,11 +16,23 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.swervedrive.IntakeSubsystem;
+import frc.robot.subsystems.swervedrive.ArmSubsystem;
+import frc.robot.subsystems.swervedrive.ClimberSubsystem;
+import frc.robot.subsystems.swervedrive.ElevatorSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
+
+import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
+
 import java.io.File;
 import swervelib.SwerveInputStream;
 
@@ -33,18 +45,23 @@ public class RobotContainer
 {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  final         CommandXboxController driverXbox = new CommandXboxController(0);
+  final         CommandJoystick driverJoystick = new CommandJoystick(0);
+  final         CommandJoystick DASH = new CommandJoystick(2);
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/neo"));
+  private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+  private final ClimberSubsystem climber = new ClimberSubsystem();
+  private final ArmSubsystem arm = new ArmSubsystem();
+  private final IntakeSubsystem intake = new IntakeSubsystem();
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                () -> driverXbox.getLeftY() * -1,
-                                                                () -> driverXbox.getLeftX() * -1)
-                                                            .withControllerRotationAxis(driverXbox::getRightX)
+                                                                () -> driverJoystick.getY() * -1,
+                                                                () -> driverJoystick.getX() * -1)
+                                                            .withControllerRotationAxis(() -> driverJoystick.getTwist())
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
@@ -52,8 +69,8 @@ public class RobotContainer
   /**
    * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
    */
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(driverXbox::getRightX,
-                                                                                             driverXbox::getRightY)
+  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
+                                                           .withControllerRotationAxis(() -> driverJoystick.getTwist())
                                                            .headingWhile(true);
 
   /**
@@ -63,10 +80,9 @@ public class RobotContainer
                                                              .allianceRelativeControl(false);
 
   SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                        () -> -driverXbox.getLeftY(),
-                                                                        () -> -driverXbox.getLeftX())
-                                                                    .withControllerRotationAxis(() -> driverXbox.getRawAxis(
-                                                                        2))
+                                                                        () -> -driverJoystick.getY(),
+                                                                        () -> -driverJoystick.getX())
+                                                                    .withControllerRotationAxis(() -> driverJoystick.getTwist())
                                                                     .deadband(OperatorConstants.DEADBAND)
                                                                     .scaleTranslation(0.8)
                                                                     .allianceRelativeControl(true);
@@ -74,14 +90,14 @@ public class RobotContainer
   SwerveInputStream driveDirectAngleKeyboard     = driveAngularVelocityKeyboard.copy()
                                                                                .withControllerHeadingAxis(() ->
                                                                                                               Math.sin(
-                                                                                                                  driverXbox.getRawAxis(
+                                                                                                                  driverJoystick.getRawAxis(
                                                                                                                       2) *
                                                                                                                   Math.PI) *
                                                                                                               (Math.PI *
                                                                                                                2),
                                                                                                           () ->
                                                                                                               Math.cos(
-                                                                                                                  driverXbox.getRawAxis(
+                                                                                                                  driverJoystick.getRawAxis(
                                                                                                                       2) *
                                                                                                                   Math.PI) *
                                                                                                               (Math.PI *
@@ -98,6 +114,10 @@ public class RobotContainer
   {
     // Configure the trigger bindings
     configureBindings();
+
+    arm.setDefaultCommand(arm.setAngle(Degrees.of(0)));
+    elevator.setDefaultCommand(elevator.set(0));
+
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
   }
@@ -145,14 +165,14 @@ public class RobotContainer
                                                                      new Constraints(Units.degreesToRadians(360),
                                                                                      Units.degreesToRadians(180))
                                            ));
-      driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-      driverXbox.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
-      driverXbox.button(2).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
+      driverJoystick.button(5).onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+      driverJoystick.button(3).whileTrue(drivebase.sysIdDriveMotorCommand());
+      driverJoystick.button(4).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
                                                      () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
 
 
 
-//      driverXbox.b().whileTrue(
+//      driverJoystick.b().whileTrue(
 //          drivebase.driveToPose(
 //              new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
 //                              );
@@ -162,22 +182,27 @@ public class RobotContainer
     {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
-      driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.y().whileTrue(drivebase.driveToDistanceCommand(10.0, 0.2));
-      // driverXbox.a().whileTrue(drivebase.aimAtTarget(Cameras.CENTER_CAM));
-      driverXbox.b().whileTrue(drivebase.driveToPose(new Pose2d(3.405, 2.497, Rotation2d.fromDegrees(5.194))));
-      driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.back().whileTrue(drivebase.centerModulesCommand());
-      driverXbox.leftBumper().whileTrue(drivebase.sysIdAngleMotorCommand());
-      driverXbox.rightBumper().whileTrue(drivebase.sysIdDriveMotorCommand());
+      driverJoystick.button(3).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      // driverJoystick.button(10).whileTrue(drivebase.driveToDistanceCommand(10.0, 0.2));
+      // driverJoystick.a().whileTrue(drivebase.aimAtTarget(Cameras.CENTER_CAM));
+      // driverJoystick.button(4).whileTrue(drivebase.driveToPose(new Pose2d(3.405, 2.497, Rotation2d.fromDegrees(5.194))));
+      driverJoystick.button(6).onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverJoystick.button(5).whileTrue(drivebase.centerModulesCommand());
+      driverJoystick.button(11).whileTrue(drivebase.sysIdAngleMotorCommand());
+      driverJoystick.button(12).whileTrue(drivebase.sysIdDriveMotorCommand());
     } else
     {
-      driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-      driverXbox.start().whileTrue(Commands.none());
-      driverXbox.back().whileTrue(Commands.none());
-      driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.rightBumper().whileTrue(Commands.none());
+      driverJoystick.button(3).onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      // driverJoystick.button(0).onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
+      driverJoystick.button(4).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      driverJoystick.povUp().whileTrue(climber.raiseClimber());
+      driverJoystick.povDown().whileTrue(climber.lowerClimber());
+      driverJoystick.button(2).whileTrue(new ParallelCommandGroup( elevator.setHeight(Meters.of(0)), arm.setAngle(Degrees.of(0))));
+
+      DASH.button(8).whileTrue(intake.intakeCommand());
+      DASH.button(6).whileTrue(intake.outtakeCommand());
+      DASH.button(1).onTrue(new ParallelCommandGroup(elevator.setHeight(Meters.of(0.46)), arm.setAngle(Degrees.of(100))));
+      DASH.button(4).onTrue(new ParallelCommandGroup(elevator.setHeight(Meters.of(1.35)), arm.setAngle(Degrees.of(125))));
     }
 
   }

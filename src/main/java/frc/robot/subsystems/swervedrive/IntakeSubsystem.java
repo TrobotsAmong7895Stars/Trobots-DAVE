@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class IntakeSubsystem extends SubsystemBase {
   private final SparkMax intakeLeader;
   private final SparkMax intakeFollower;
-  private Debouncer currentDebounce = new Debouncer(0.1, Debouncer.DebounceType.kRising);
+  // private Debouncer currentDebounce = new Debouncer(0.1, Debouncer.DebounceType.kRising);
 
   /** Creates a new ExampleSubsystem. */
   public IntakeSubsystem() {
@@ -53,26 +53,23 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeLeader.set(0);
   }
 
+  /*
   public boolean isGamePieceIn() {
     return currentDebounce.calculate(intakeLeader.getOutputCurrent() >= 40.0);
   }
+    */
 
   public Command intakeCommand() {
-    return new RunCommand(() -> setSpeed(-1.0), this) {
-      @Override
-      public boolean isFinished() {
-        return isGamePieceIn();
-      }
-    }.finallyDo((interrupted) -> stop());
+    return Commands.run(() -> this.setSpeed(-1.0)).finallyDo(() -> this.stop());
   }
 
   public Command outtakeCommand() {
-    return Commands.run(() -> this.setSpeed(1.0)). finallyDo(() -> this.stop());
+    return Commands.run(() -> this.setSpeed(1.0)).finallyDo(() -> this.stop());
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putBoolean("Has Game Piece", isGamePieceIn());
+    // SmartDashboard.putBoolean("Has Game Piece", isGamePieceIn());
   }
 }

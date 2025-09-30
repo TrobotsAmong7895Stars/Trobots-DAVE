@@ -62,7 +62,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   private ArmConfig armCfg = new ArmConfig(sparkSmartMotorController)
   // Soft limit is applied to the SmartMotorControllers PID
-  .withSoftLimits(Degrees.of(-20), Degrees.of(90))
+  .withSoftLimits(Degrees.of(-20), Degrees.of(150))
   // Hard limit is applied to the simulation.
   .withHardLimit(Degrees.of(-30), Degrees.of(40))
   // Starting position is where your arm starts

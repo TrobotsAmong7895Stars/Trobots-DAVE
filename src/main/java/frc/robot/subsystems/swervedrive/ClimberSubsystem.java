@@ -21,9 +21,9 @@ public class ClimberSubsystem extends SubsystemBase {
 
   /** Creates a new ExampleSubsystem. */
   public ClimberSubsystem() {
-    climberLeader = new SparkMax(14, MotorType.kBrushless);
+    climberLeader = new SparkMax(13, MotorType.kBrushless);
 
-    climberFollower = new SparkMax(13, MotorType.kBrushless);
+    climberFollower = new SparkMax(14, MotorType.kBrushless);
 
     SparkMaxConfig globalConfig = new SparkMaxConfig();
     SparkMaxConfig followerConfig = new SparkMaxConfig();
@@ -35,11 +35,16 @@ public class ClimberSubsystem extends SubsystemBase {
     followerConfig
       .apply(globalConfig)
       .follow(climberLeader)
-      .inverted(false);
+      .inverted(true);
 
     climberLeader.configure(globalConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     climberFollower.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
+
+  private final BrakeSubsystem brake = new BrakeSubsystem(
+    1, 0.0, 35.0,
+    2, 160.0, 130.0
+  );
 
   public void setSpeed(double speed) {
     climberLeader.set(speed);
@@ -51,11 +56,27 @@ public class ClimberSubsystem extends SubsystemBase {
 
 
   public Command raiseClimber() {
-    return Commands.run(() -> this.setSpeed(1.0)).finallyDo(() -> this.stop());
+    Command disengageIfNeeded = Commands.either(
+      brake.disengageAllCommand(),
+      Commands.none(),
+      () -> !brake.areAllBrakesEngaged()
+    );
+    return disengageIfNeeded
+      .andThen(Commands.run(() -> this.setSpeed(1.0), this))
+      .andThen(brake.engageAllCommand())
+      .finallyDo(() -> this.stop());
   }
 
   public Command lowerClimber() {
-    return Commands.run(() -> this.setSpeed(-1.0)). finallyDo(() -> this.stop());
+    Command disengageIfNeeded = Commands.either(
+      brake.disengageAllCommand(),
+      Commands.none(),
+      () -> !brake.areAllBrakesEngaged()
+    );
+    return disengageIfNeeded
+      .andThen(Commands.run(() -> this.setSpeed(-1.0), this))
+      .andThen(brake.engageAllCommand())
+      .finallyDo(() -> this.stop());
   }
 
   @Override
