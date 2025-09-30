@@ -197,7 +197,7 @@ public class RobotContainer
       driverJoystick.button(4).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverJoystick.povUp().whileTrue(climber.raiseClimber());
       driverJoystick.povDown().whileTrue(climber.lowerClimber());
-      driverJoystick.button(2).whileTrue(new ParallelCommandGroup( elevator.setHeight(Meters.of(0)), arm.setAngle(Degrees.of(0))));
+      driverJoystick.button(2).onTrue(new ParallelCommandGroup( elevator.setHeight(Meters.of(0)), arm.setAngle(Degrees.of(0))));
 
       DASH.button(8).whileTrue(intake.intakeCommand());
       DASH.button(6).whileTrue(intake.outtakeCommand());

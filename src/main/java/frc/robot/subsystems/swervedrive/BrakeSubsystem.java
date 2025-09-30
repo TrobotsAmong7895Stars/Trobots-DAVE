@@ -85,7 +85,7 @@ public class BrakeSubsystem extends SubsystemBase {
    */
   public Command disengageCommand(int index) {
     return Commands.runOnce(() -> disengageBrake(index), this)
-        .andThen(Commands.waitSeconds(0.5));
+        .andThen(Commands.waitSeconds(0.2));
   }
 
   /**
@@ -94,7 +94,7 @@ public class BrakeSubsystem extends SubsystemBase {
    */
   public Command engageCommand(int index) {
     return Commands.runOnce(() -> engageBrake(index), this)
-        .andThen(Commands.waitSeconds(0.5));
+        .andThen(Commands.waitSeconds(0.2));
   }
 
 /**
@@ -102,7 +102,7 @@ public class BrakeSubsystem extends SubsystemBase {
    */
   public Command disengageAllCommand() {
     return Commands.runOnce(this::disengageAll, this)
-        .andThen(Commands.waitSeconds(0.5));
+        .andThen(Commands.waitSeconds(0.2));
   }
 
   /**
@@ -110,7 +110,7 @@ public class BrakeSubsystem extends SubsystemBase {
    */
   public Command engageAllCommand() {
     return Commands.runOnce(this::engageAll, this)
-        .andThen(Commands.waitSeconds(0.5));
+        .andThen(Commands.waitSeconds(0.2));
   }
 
   /**

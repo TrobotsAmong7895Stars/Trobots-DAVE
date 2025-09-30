@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class IntakeSubsystem extends SubsystemBase {
   private final SparkMax intakeLeader;
   private final SparkMax intakeFollower;
-  // private Debouncer currentDebounce = new Debouncer(0.1, Debouncer.DebounceType.kRising);
+  private Debouncer currentDebounce = new Debouncer(0.1, Debouncer.DebounceType.kRising);
 
   /** Creates a new ExampleSubsystem. */
   public IntakeSubsystem() {
@@ -33,8 +33,9 @@ public class IntakeSubsystem extends SubsystemBase {
     SparkMaxConfig followerConfig = new SparkMaxConfig();
 
     globalConfig
-      .smartCurrentLimit(40)
-      .idleMode(IdleMode.kBrake);
+      .smartCurrentLimit(80)
+      .idleMode(IdleMode.kBrake)
+      .openLoopRampRate(0.5);
 
     followerConfig
       .apply(globalConfig)
@@ -53,23 +54,30 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeLeader.set(0);
   }
 
-  /*
   public boolean isGamePieceIn() {
-    return currentDebounce.calculate(intakeLeader.getOutputCurrent() >= 40.0);
+    return currentDebounce.calculate(intakeLeader.getOutputCurrent() >= 50.0);
   }
-    */
 
   public Command intakeCommand() {
-    return Commands.run(() -> this.setSpeed(-1.0)).finallyDo(() -> this.stop());
+    return new RunCommand(() -> setSpeed(-1.0), this)
+    .withTimeout(3.0)
+    .until(this::isGamePieceIn)
+    .finallyDo(() -> stop());
   }
 
   public Command outtakeCommand() {
-    return Commands.run(() -> this.setSpeed(1.0)).finallyDo(() -> this.stop());
+    return Commands.run(() -> this.setSpeed(1.0), this)
+    .withTimeout(3.0)
+    .finallyDo(() -> this.stop());
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    // SmartDashboard.putBoolean("Has Game Piece", isGamePieceIn());
+    SmartDashboard.putBoolean("Has Game Piece", isGamePieceIn());
+    SmartDashboard.putNumber("Intake Leader Current (A)", intakeLeader.getOutputCurrent());
+    SmartDashboard.putNumber("Intake Follower Current (A)", intakeFollower.getOutputCurrent());
+    SmartDashboard.putNumber("Intake Leader Voltage (V)", intakeLeader.getBusVoltage());
+    SmartDashboard.putNumber("Intake Leader Speed", intakeLeader.get());
   }
 }
