@@ -22,6 +22,7 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -97,7 +98,16 @@ public class ElevatorSubsystem extends SubsystemBase {
    * Move the elevator up and down.
    * @param dutycycle [-1, 1] speed to set the elevator too.
    */
-  public Command set(double dutycycle) { return elevator.set(dutycycle);}
+  public Command set(double dutycycle) {
+    Command disengageIfNeeded = Commands.either(
+      brake.disengageAllCommand(),
+      Commands.none(),
+      () -> !brake.areAllBrakesEngaged()
+    );
+    return disengageIfNeeded
+      .andThen(elevator.set(dutycycle))
+      .andThen(brake.engageCommand(0));
+  }
 
   /**
    * Run sysId on the {@link Elevator}
@@ -111,6 +121,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     elevator.updateTelemetry();
+    SmartDashboard.putNumber("Elevator Height (m)", elevator.getHeight().in(Meters));
   }
 
   @Override

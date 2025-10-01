@@ -55,13 +55,13 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public boolean isGamePieceIn() {
-    return currentDebounce.calculate(intakeLeader.getOutputCurrent() >= 50.0);
+    return currentDebounce.calculate(intakeLeader.getOutputCurrent() >= 70.0);
   }
 
   public Command intakeCommand() {
     return new RunCommand(() -> setSpeed(-1.0), this)
     .withTimeout(3.0)
-    .until(this::isGamePieceIn)
+    //.until(this::isGamePieceIn)
     .finallyDo(() -> stop());
   }
 
@@ -77,7 +77,5 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Has Game Piece", isGamePieceIn());
     SmartDashboard.putNumber("Intake Leader Current (A)", intakeLeader.getOutputCurrent());
     SmartDashboard.putNumber("Intake Follower Current (A)", intakeFollower.getOutputCurrent());
-    SmartDashboard.putNumber("Intake Leader Voltage (V)", intakeLeader.getBusVoltage());
-    SmartDashboard.putNumber("Intake Leader Speed", intakeLeader.get());
   }
 }

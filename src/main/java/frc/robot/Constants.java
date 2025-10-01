@@ -39,6 +39,21 @@ public final class Constants
     public static final double WHEEL_LOCK_TIME = 10; // seconds
   }
 
+  public static final class DASHButtons
+  {
+    public static final int INTAKE = 8;
+    public static final int OUTTAKE = 6;
+    public static final int CORAL = 2;
+    public static final int ALGAE = 10;
+    public static final int PROCESSOR = 9;
+    public static final int L1 = 1;
+    public static final int L2 = 4;
+    public static final int L3 = 3;
+    public static final int AL2 = 5;
+    public static final int AL3 = 7;
+    public static final int EB = 11;
+  }
+
   public static class OperatorConstants
   {
 

@@ -17,17 +17,19 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.DASHButtons;
 import frc.robot.subsystems.swervedrive.IntakeSubsystem;
 import frc.robot.subsystems.swervedrive.ArmSubsystem;
 import frc.robot.subsystems.swervedrive.ClimberSubsystem;
 import frc.robot.subsystems.swervedrive.ElevatorSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.subsystems.swervedrive.Vision.Cameras;
+// import frc.robot.subsystems.swervedrive.Vision.Cameras;
 
 import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Degrees;
@@ -61,7 +63,7 @@ public class RobotContainer
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
                                                                 () -> driverJoystick.getY() * -1,
                                                                 () -> driverJoystick.getX() * -1)
-                                                            .withControllerRotationAxis(() -> driverJoystick.getTwist())
+                                                            .withControllerRotationAxis(() -> driverJoystick.getTwist() * -1)
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
@@ -70,7 +72,7 @@ public class RobotContainer
    * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
    */
   SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
-                                                           .withControllerRotationAxis(() -> driverJoystick.getTwist())
+                                                           .withControllerRotationAxis(() -> driverJoystick.getTwist() * -1)
                                                            .headingWhile(true);
 
   /**
@@ -82,7 +84,7 @@ public class RobotContainer
   SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(drivebase.getSwerveDrive(),
                                                                         () -> -driverJoystick.getY(),
                                                                         () -> -driverJoystick.getX())
-                                                                    .withControllerRotationAxis(() -> driverJoystick.getTwist())
+                                                                    .withControllerRotationAxis(() -> driverJoystick.getTwist() * -1)
                                                                     .deadband(OperatorConstants.DEADBAND)
                                                                     .scaleTranslation(0.8)
                                                                     .allianceRelativeControl(true);
@@ -115,7 +117,7 @@ public class RobotContainer
     // Configure the trigger bindings
     configureBindings();
 
-    arm.setDefaultCommand(arm.setAngle(Degrees.of(0)));
+    // arm.setDefaultCommand(arm.setAngle(Degrees.of(0)));
     elevator.setDefaultCommand(elevator.set(0));
 
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -197,12 +199,93 @@ public class RobotContainer
       driverJoystick.button(4).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverJoystick.povUp().whileTrue(climber.raiseClimber());
       driverJoystick.povDown().whileTrue(climber.lowerClimber());
-      driverJoystick.button(2).onTrue(new ParallelCommandGroup( elevator.setHeight(Meters.of(0)), arm.setAngle(Degrees.of(0))));
+      driverJoystick.button(2).onTrue(new ParallelCommandGroup(elevator.setHeight(Meters.of(0)), arm.setAngle(Degrees.of(0))));
+      
+      // DASH Joystick manually moves both the elevator and the arm
+      new Trigger(() -> DASH.getY() > 0.1).whileTrue(elevator.set(0.2));
+      new Trigger(() -> DASH.getY() < -0.1).whileTrue(elevator.set(-0.2));
+      new Trigger(() -> DASH.getX() > 0.1).whileTrue(arm.set(1));
+      new Trigger(() -> DASH.getX() < -0.1).whileTrue(arm.set(-1));
 
-      DASH.button(8).whileTrue(intake.intakeCommand());
-      DASH.button(6).whileTrue(intake.outtakeCommand());
-      DASH.button(1).onTrue(new ParallelCommandGroup(elevator.setHeight(Meters.of(0.46)), arm.setAngle(Degrees.of(100))));
-      DASH.button(4).onTrue(new ParallelCommandGroup(elevator.setHeight(Meters.of(1.35)), arm.setAngle(Degrees.of(125))));
+      // Operates the intake
+      DASH.button(DASHButtons.INTAKE).whileTrue(intake.intakeCommand());
+      DASH.button(DASHButtons.OUTTAKE).whileTrue(intake.outtakeCommand());
+
+      // Coral Button
+      DASH.button(DASHButtons.CORAL)
+      .onTrue(
+        new ParallelCommandGroup(
+          elevator.setHeight(Meters.of(0)), 
+          arm.setAngle(Degrees.of(0))
+        )
+      );
+
+      // Algae Button
+      DASH.button(DASHButtons.ALGAE)
+      .onTrue(
+        new ParallelCommandGroup(
+          elevator.setHeight(Meters.of(0)), 
+          arm.setAngle(Degrees.of(0))
+        )
+      );
+
+      // Processor Button
+      DASH.button(DASHButtons.PROCESSOR)
+      .onTrue(
+        new ParallelCommandGroup(
+          elevator.setHeight(Meters.of(0)), 
+          arm.setAngle(Degrees.of(0))
+        )
+      );
+
+      // EB Button
+      // DASH.button(DASHButtons.EB).onTrue(Commands.none());
+
+      // L1
+      DASH.button(DASHButtons.L1)
+      .onTrue(
+        new ParallelCommandGroup(
+          elevator.setHeight(Meters.of(0.95)), 
+          arm.setAngle(Degrees.of(94))
+        )
+      );
+
+      // L2
+      DASH.button(DASHButtons.L2)
+      .onTrue(
+        new ParallelCommandGroup(
+          elevator.setHeight(Meters.of(0)),   
+          arm.setAngle(Degrees.of(0))
+        )
+      );
+      
+      // L3
+      DASH.button(DASHButtons.L3)
+      .onTrue(
+        new ParallelCommandGroup(
+          elevator.setHeight(Meters.of(0)), 
+          arm.setAngle(Degrees.of(0))
+        )
+      );
+
+      // AL2
+      DASH.button(DASHButtons.AL2)
+      .onTrue(
+        new ParallelCommandGroup(
+          elevator.setHeight(Meters.of(0)), 
+          arm.setAngle(Degrees.of(0))
+        )
+      );
+
+      // AL3
+      DASH.button(DASHButtons.AL3)
+      .onTrue(
+        new ParallelCommandGroup(
+          elevator.setHeight(Meters.of(0)), 
+          arm.setAngle(Degrees.of(0))
+        )
+      );
+
     }
 
   }
@@ -215,7 +298,7 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("Two-Point Auto");
+    return drivebase.getAutonomousCommand("Demo Auto");
   }
 
   public void setMotorBrake(boolean brake)
