@@ -118,7 +118,7 @@ public class RobotContainer
     configureBindings();
 
     // arm.setDefaultCommand(arm.setAngle(Degrees.of(0)));
-    elevator.setDefaultCommand(elevator.set(0));
+    // elevator.setDefaultCommand(elevator.set(0));
 
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
@@ -240,27 +240,39 @@ public class RobotContainer
       // Coral Button
       DASH.button(DASHButtons.CORAL)
       .onTrue(
+        new SequentialCommandGroup(
+          arm.setAngle(Degrees.of(60)),
+          new WaitCommand(2),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(0)), 
-          arm.setAngle(Degrees.of(0))
+          arm.setAngle(Degrees.of(100))
+        )
         )
       );
 
       // Algae Button
       DASH.button(DASHButtons.ALGAE)
       .onTrue(
+        new SequentialCommandGroup(
+          arm.setAngle(Degrees.of(60)),
+          new WaitCommand(2),
         new ParallelCommandGroup(
-          elevator.setHeight(Meters.of(0)), 
-          arm.setAngle(Degrees.of(0))
+          elevator.setHeight(Meters.of(0.32)), 
+          arm.setAngle(Degrees.of(97))
+        )
         )
       );
 
       // Processor Button
       DASH.button(DASHButtons.PROCESSOR)
       .onTrue(
+        new SequentialCommandGroup(
+          arm.setAngle(Degrees.of(60)),
+          new WaitCommand(2),
         new ParallelCommandGroup(
-          elevator.setHeight(Meters.of(0)), 
-          arm.setAngle(Degrees.of(0))
+          elevator.setHeight(Meters.of(0.62)), 
+          arm.setAngle(Degrees.of(100))
+        )
         )
       );
 
@@ -270,45 +282,65 @@ public class RobotContainer
       // L1
       DASH.button(DASHButtons.L1)
       .onTrue(
+        new SequentialCommandGroup(
+          arm.setAngle(Degrees.of(60)),
+          new WaitCommand(2),
         new ParallelCommandGroup(
-          elevator.setHeight(Meters.of(0.95)), 
-          arm.setAngle(Degrees.of(94))
+          elevator.setHeight(Meters.of(0.8)), 
+          arm.setAngle(Degrees.of(95))
+        )
         )
       );
 
       // L2
       DASH.button(DASHButtons.L2)
       .onTrue(
+        new SequentialCommandGroup(
+          arm.setAngle(Degrees.of(60)),
+          new WaitCommand(2),
         new ParallelCommandGroup(
-          elevator.setHeight(Meters.of(0)),   
-          arm.setAngle(Degrees.of(0))
+          elevator.setHeight(Meters.of(1.05)),   
+          arm.setAngle(Degrees.of(95))
+        )
         )
       );
       
       // L3
       DASH.button(DASHButtons.L3)
       .onTrue(
+        new SequentialCommandGroup(
+          arm.setAngle(Degrees.of(60)),
+          new WaitCommand(2),
         new ParallelCommandGroup(
-          elevator.setHeight(Meters.of(0)), 
-          arm.setAngle(Degrees.of(0))
+          elevator.setHeight(Meters.of(1.55)), 
+          arm.setAngle(Degrees.of(95))
+        )
         )
       );
 
       // AL2
       DASH.button(DASHButtons.AL2)
       .onTrue(
+        new SequentialCommandGroup(
+          arm.setAngle(Degrees.of(60)),
+          new WaitCommand(2),
         new ParallelCommandGroup(
-          elevator.setHeight(Meters.of(0)), 
-          arm.setAngle(Degrees.of(0))
+          elevator.setHeight(Meters.of(1.35)), 
+          arm.setAngle(Degrees.of(105))
+        )
         )
       );
 
       // AL3
       DASH.button(DASHButtons.AL3)
       .onTrue(
+        new SequentialCommandGroup(
+          arm.setAngle(Degrees.of(60)),
+          new WaitCommand(2),
         new ParallelCommandGroup(
-          elevator.setHeight(Meters.of(0)), 
-          arm.setAngle(Degrees.of(0))
+          elevator.setHeight(Meters.of(1.7)), 
+          arm.setAngle(Degrees.of(100))
+        )   
         )
       );
 

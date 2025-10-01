@@ -68,7 +68,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private ElevatorConfig elevconfig = new ElevatorConfig(sparkSmartMotorController)
       .withStartingHeight(Meters.of(0.03))
-      .withHardLimits(Meters.of(0), Meters.of(3))
+      .withHardLimits(Meters.of(0), Meters.of(1.75))
       .withTelemetry("Elevator", TelemetryVerbosity.HIGH)
       .withMass(Pounds.of(16));
 

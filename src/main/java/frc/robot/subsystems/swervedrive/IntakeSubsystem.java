@@ -33,9 +33,10 @@ public class IntakeSubsystem extends SubsystemBase {
     SparkMaxConfig followerConfig = new SparkMaxConfig();
 
     globalConfig
-      .smartCurrentLimit(80)
-      .idleMode(IdleMode.kBrake)
-      .openLoopRampRate(0.5);
+      .smartCurrentLimit(60)
+      .voltageCompensation(12)
+      .idleMode(IdleMode.kBrake);
+      //.openLoopRampRate(0.5);
 
     followerConfig
       .apply(globalConfig)

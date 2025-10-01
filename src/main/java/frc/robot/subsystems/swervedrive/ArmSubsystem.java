@@ -38,7 +38,7 @@ public class ArmSubsystem extends SubsystemBase {
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
   .withControlMode(ControlMode.CLOSED_LOOP)
   // Feedback Constants (PID Constants)
-  .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(150), DegreesPerSecondPerSecond.of(105))
+  .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(200), DegreesPerSecondPerSecond.of(180))
   .withSimClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
   // Feedforward Constants
   .withFeedforward(new ArmFeedforward(0, 0, 0))
