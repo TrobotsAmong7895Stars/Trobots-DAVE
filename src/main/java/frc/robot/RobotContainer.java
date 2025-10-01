@@ -122,6 +122,32 @@ public class RobotContainer
 
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+
+    // Intake
+    NamedCommands.registerCommand("Intake", intake.intakeCommand());
+
+    // Outtake
+    NamedCommands.registerCommand("Outtake", intake.outtakeCommand());
+
+    // L1
+    NamedCommands.registerCommand("L1Height", elevator.setHeight(Meters.of(0)));
+    NamedCommands.registerCommand("L1Angle", arm.setAngle(Degrees.of(0)));
+
+    // L2
+    NamedCommands.registerCommand("L2Height", elevator.setHeight(Meters.of(0)));
+    NamedCommands.registerCommand("L2Angle", arm.setAngle(Degrees.of(0)));
+
+    // L3
+    NamedCommands.registerCommand("L3Height", elevator.setHeight(Meters.of(0)));
+    NamedCommands.registerCommand("L3Angle", arm.setAngle(Degrees.of(0)));
+
+    // AL2
+    NamedCommands.registerCommand("AL2Height", elevator.setHeight(Meters.of(0)));
+    NamedCommands.registerCommand("AL2Angle", arm.setAngle(Degrees.of(0)));
+
+    // AL3
+    NamedCommands.registerCommand("AL3Height", elevator.setHeight(Meters.of(0)));
+    NamedCommands.registerCommand("AL3Angle", arm.setAngle(Degrees.of(0)));
   }
 
   /**
