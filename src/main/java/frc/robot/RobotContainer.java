@@ -241,7 +241,7 @@ public class RobotContainer
       DASH.button(DASHButtons.CORAL)
       .onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(60)),
+          arm.setAngle(Degrees.of(45)),
           new WaitCommand(2),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(0)), 
@@ -254,7 +254,7 @@ public class RobotContainer
       DASH.button(DASHButtons.ALGAE)
       .onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(60)),
+          arm.setAngle(Degrees.of(45)),
           new WaitCommand(2),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(0.32)), 
@@ -267,7 +267,7 @@ public class RobotContainer
       DASH.button(DASHButtons.PROCESSOR)
       .onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(60)),
+          arm.setAngle(Degrees.of(45)),
           new WaitCommand(2),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(0.62)), 
@@ -283,7 +283,7 @@ public class RobotContainer
       DASH.button(DASHButtons.L1)
       .onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(60)),
+          arm.setAngle(Degrees.of(45)),
           new WaitCommand(2),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(0.8)), 
@@ -296,7 +296,7 @@ public class RobotContainer
       DASH.button(DASHButtons.L2)
       .onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(60)),
+          arm.setAngle(Degrees.of(45)),
           new WaitCommand(2),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(1.05)),   
@@ -309,7 +309,7 @@ public class RobotContainer
       DASH.button(DASHButtons.L3)
       .onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(60)),
+          arm.setAngle(Degrees.of(45)),
           new WaitCommand(2),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(1.55)), 
@@ -322,7 +322,7 @@ public class RobotContainer
       DASH.button(DASHButtons.AL2)
       .onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(60)),
+          arm.setAngle(Degrees.of(45)),
           new WaitCommand(2),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(1.35)), 
@@ -335,7 +335,7 @@ public class RobotContainer
       DASH.button(DASHButtons.AL3)
       .onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(60)),
+          arm.setAngle(Degrees.of(45)),
           new WaitCommand(2),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(1.7)), 

@@ -57,8 +57,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   .withMotorInverted(false)
   .withIdleMode(MotorMode.BRAKE)
   .withStatorCurrentLimit(Amps.of(40))
-  .withClosedLoopRampRate(Seconds.of(0.25))
-  .withOpenLoopRampRate(Seconds.of(0.25));
+  .withClosedLoopRampRate(Seconds.of(0.20))
+  .withOpenLoopRampRate(Seconds.of(0.20));
 
   // Vendor motor controller object
   private SparkMax spark = new SparkMax(9, MotorType.kBrushless);

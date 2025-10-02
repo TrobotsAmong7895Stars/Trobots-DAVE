@@ -38,7 +38,7 @@ public class ArmSubsystem extends SubsystemBase {
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
   .withControlMode(ControlMode.CLOSED_LOOP)
   // Feedback Constants (PID Constants)
-  .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(200), DegreesPerSecondPerSecond.of(180))
+  .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(160))
   .withSimClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
   // Feedforward Constants
   .withFeedforward(new ArmFeedforward(0, 0, 0))
@@ -52,8 +52,8 @@ public class ArmSubsystem extends SubsystemBase {
   .withMotorInverted(false)
   .withIdleMode(MotorMode.BRAKE)
   .withStatorCurrentLimit(Amps.of(20))
-  .withClosedLoopRampRate(Seconds.of(0.25))
-  .withOpenLoopRampRate(Seconds.of(0.25));
+  .withClosedLoopRampRate(Seconds.of(0.10))
+  .withOpenLoopRampRate(Seconds.of(0.10));
 
   // Vendor motor controller object
   private SparkMax spark = new SparkMax(12, MotorType.kBrushless);
