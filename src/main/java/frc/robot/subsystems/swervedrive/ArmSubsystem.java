@@ -65,7 +65,7 @@ public class ArmSubsystem extends SubsystemBase {
   // Soft limit is applied to the SmartMotorControllers PID
   .withSoftLimits(Degrees.of(-20), Degrees.of(150))
   // Hard limit is applied to the simulation.
-  .withHardLimit(Degrees.of(-30), Degrees.of(40))
+  .withHardLimit(Degrees.of(-20), Degrees.of(150))
   // Starting position is where your arm starts
   .withStartingPosition(Degrees.of(0))
   // Length and mass of your arm for sim.

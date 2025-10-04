@@ -5,15 +5,77 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "Go to Demo Reef"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "L2Height"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Go to Demo Reef"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L2Angle"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 6.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Outtake"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.5
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AL3Height"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Go to Demo Algae L3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AL3Angle"
+                }
+              }
+            ]
           }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }

@@ -123,31 +123,34 @@ public class RobotContainer
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
 
+    // Safety
+    NamedCommands.registerCommand("Safety", arm.setAngle(Degrees.of(50)));
+
     // Intake
-    NamedCommands.registerCommand("Intake", intake.intakeCommand());
+    NamedCommands.registerCommand("Intake", intake.intakeCommand().withTimeout(2));
 
     // Outtake
-    NamedCommands.registerCommand("Outtake", intake.outtakeCommand());
+    NamedCommands.registerCommand("Outtake", intake.outtakeCommand().withTimeout(2));
 
-    // L1
-    NamedCommands.registerCommand("L1Height", elevator.setHeight(Meters.of(0)));
+    
+    NamedCommands.registerCommand("L1Height", elevator.setHeight(Meters.of(0)).withTimeout(3));
     NamedCommands.registerCommand("L1Angle", arm.setAngle(Degrees.of(0)));
 
     // L2
-    NamedCommands.registerCommand("L2Height", elevator.setHeight(Meters.of(0)));
-    NamedCommands.registerCommand("L2Angle", arm.setAngle(Degrees.of(0)));
+    NamedCommands.registerCommand("L2Height", elevator.setHeight(Meters.of(1.05)).withTimeout(3));
+    NamedCommands.registerCommand("L2Angle", arm.setAngle(Degrees.of(95)).withTimeout(3));
 
     // L3
-    NamedCommands.registerCommand("L3Height", elevator.setHeight(Meters.of(0)));
+    NamedCommands.registerCommand("L3Height", elevator.setHeight(Meters.of(0)).withTimeout(3));
     NamedCommands.registerCommand("L3Angle", arm.setAngle(Degrees.of(0)));
 
     // AL2
-    NamedCommands.registerCommand("AL2Height", elevator.setHeight(Meters.of(0)));
-    NamedCommands.registerCommand("AL2Angle", arm.setAngle(Degrees.of(0)));
+    NamedCommands.registerCommand("AL2Height", elevator.setHeight(Meters.of(0)).withTimeout(3));
+    NamedCommands.registerCommand("AL2Angle", arm.setAngle(Degrees.of(0)).withTimeout(3));
 
     // AL3
-    NamedCommands.registerCommand("AL3Height", elevator.setHeight(Meters.of(0)));
-    NamedCommands.registerCommand("AL3Angle", arm.setAngle(Degrees.of(0)));
+    NamedCommands.registerCommand("AL3Height", elevator.setHeight(Meters.of(1.7)).withTimeout(3));
+    NamedCommands.registerCommand("AL3Angle", arm.setAngle(Degrees.of(100)).withTimeout(3));
   }
 
   /**
@@ -159,6 +162,12 @@ public class RobotContainer
    */
   private void configureBindings()
   {
+    
+    
+    
+    
+    
+    
     Command driveFieldOrientedDirectAngle      = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
     Command driveRobotOrientedAngularVelocity  = drivebase.driveFieldOriented(driveRobotOriented);
@@ -241,8 +250,7 @@ public class RobotContainer
       DASH.button(DASHButtons.CORAL)
       .onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(45)),
-          new WaitCommand(2),
+          arm.setAngle(Degrees.of(45)).withTimeout(2),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(0)), 
           arm.setAngle(Degrees.of(100))
@@ -254,8 +262,7 @@ public class RobotContainer
       DASH.button(DASHButtons.ALGAE)
       .onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(45)),
-          new WaitCommand(2),
+          arm.setAngle(Degrees.of(45)).withTimeout(2),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(0.32)), 
           arm.setAngle(Degrees.of(97))
@@ -267,8 +274,7 @@ public class RobotContainer
       DASH.button(DASHButtons.PROCESSOR)
       .onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(45)),
-          new WaitCommand(2),
+          arm.setAngle(Degrees.of(45)).withTimeout(2),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(0.62)), 
           arm.setAngle(Degrees.of(100))
@@ -283,8 +289,7 @@ public class RobotContainer
       DASH.button(DASHButtons.L1)
       .onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(45)),
-          new WaitCommand(2),
+          arm.setAngle(Degrees.of(45)).withTimeout(2),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(0.8)), 
           arm.setAngle(Degrees.of(95))
@@ -296,8 +301,7 @@ public class RobotContainer
       DASH.button(DASHButtons.L2)
       .onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(45)),
-          new WaitCommand(2),
+          arm.setAngle(Degrees.of(45)).withTimeout(2),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(1.05)),   
           arm.setAngle(Degrees.of(95))
@@ -309,8 +313,7 @@ public class RobotContainer
       DASH.button(DASHButtons.L3)
       .onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(45)),
-          new WaitCommand(2),
+          arm.setAngle(Degrees.of(45)).withTimeout(2),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(1.55)), 
           arm.setAngle(Degrees.of(95))
@@ -322,8 +325,7 @@ public class RobotContainer
       DASH.button(DASHButtons.AL2)
       .onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(45)),
-          new WaitCommand(2),
+          arm.setAngle(Degrees.of(45)).withTimeout(2),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(1.35)), 
           arm.setAngle(Degrees.of(105))
@@ -335,8 +337,7 @@ public class RobotContainer
       DASH.button(DASHButtons.AL3)
       .onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(45)),
-          new WaitCommand(2),
+          arm.setAngle(Degrees.of(45)).withTimeout(2),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(1.7)), 
           arm.setAngle(Degrees.of(100))
