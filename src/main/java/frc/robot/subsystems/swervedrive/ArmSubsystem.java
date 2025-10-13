@@ -36,7 +36,7 @@ import yams.motorcontrollers.local.SparkWrapper;
 public class ArmSubsystem extends SubsystemBase {
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
-  .withControlMode(ControlMode.CLOSED_LOOP)
+  .withControlMode(ControlMode.OPEN_LOOP)
   // Feedback Constants (PID Constants)
   .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(160))
   .withSimClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
