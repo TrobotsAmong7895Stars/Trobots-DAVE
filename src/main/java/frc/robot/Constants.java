@@ -54,6 +54,27 @@ public final class Constants
     public static final int EB = 11;
   }
 
+  public static class ArmConfig
+  {
+    public static final double GEAR_RATIO = 1869.338877; // Motor rotations per arm rotation
+    public static final double POSITION_CONVERSION_FACTOR = 360.0 / GEAR_RATIO; // Degrees per motor rotation
+    public static final double VELOCITY_CONVERSION_FACTOR = POSITION_CONVERSION_FACTOR / 60.0; // Degrees per second per motor RPM
+  
+    public static final double KP = 0.5;
+    public static final double KI = 0.0;
+    public static final double KD = 0.0;
+  
+    public static final double KS = 0.0;
+    public static final double KG = 0.0;
+    public static final double KV = 0.0;
+    public static final double KA = 0.0;
+  
+    public static final double POSITION_TOLERANCE_DEG = 2.0;
+
+    public static double setpoint = 0.0;
+    public static boolean isManualMode = true;
+  }
+
   public static class OperatorConstants
   {
 

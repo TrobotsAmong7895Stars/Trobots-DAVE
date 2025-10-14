@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.swervedrive;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -21,30 +21,14 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ArmConfig;
 
 public class ArmSubsystem extends SubsystemBase {
-  private static final double GEAR_RATIO = 1869.338877; // Motor rotations per arm rotation
-  private static final double POSITION_CONVERSION_FACTOR = 360.0 / GEAR_RATIO; // Degrees per motor rotation
-  private static final double VELOCITY_CONVERSION_FACTOR = POSITION_CONVERSION_FACTOR / 60.0; // Degrees per second per motor RPM
-
-  private static final double KP = 0.5;
-  private static final double KI = 0.0;
-  private static final double KD = 0.0;
-
-  private static final double KS = 0.0;
-  private static final double KG = 0.0;
-  private static final double KV = 0.0;
-  private static final double KA = 0.0;
-
-  private static final double POSITION_TOLERANCE_DEG = 2.0;
 
   private final SparkMax motor;
   private final RelativeEncoder encoder;
   private final PIDController pidController;
   private final ArmFeedforward feedforward;
-
-  private double setpoint = 0.0;
-  private boolean isManualMode = true;
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
@@ -59,18 +43,18 @@ public class ArmSubsystem extends SubsystemBase {
       .openLoopRampRate(0.8);
 
     armConfig.encoder
-      .positionConversionFactor(POSITION_CONVERSION_FACTOR)
-      .velocityConversionFactor(VELOCITY_CONVERSION_FACTOR);
+      .positionConversionFactor(ArmConfig.POSITION_CONVERSION_FACTOR)
+      .velocityConversionFactor(ArmConfig.VELOCITY_CONVERSION_FACTOR);
 
     motor.configure(armConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     encoder = motor.getEncoder();
     encoder.setPosition(0.0);
 
-    pidController = new PIDController(KP, KI, KD);
-    pidController.setTolerance(POSITION_TOLERANCE_DEG);
+    pidController = new PIDController(ArmConfig.KP, ArmConfig.KI, ArmConfig.KD);
+    pidController.setTolerance(ArmConfig.POSITION_TOLERANCE_DEG);
 
-    feedforward = new ArmFeedforward(KS, KG, KV, KA);
+    feedforward = new ArmFeedforward(ArmConfig.KS, ArmConfig.KG, ArmConfig.KV, ArmConfig.KA);
   }
 
   /**
@@ -82,9 +66,9 @@ public class ArmSubsystem extends SubsystemBase {
    */
   public Command setAngle(Angle angle) {
     return runOnce(() -> {
-      isManualMode = false;
+      ArmConfig.isManualMode = false;
       pidController.reset();
-      setpoint = angle.in(Degrees);
+      ArmConfig.setpoint = angle.in(Degrees);
     });
   }
 
@@ -97,10 +81,10 @@ public class ArmSubsystem extends SubsystemBase {
    */
   public Command set(double dutyCycle) {
     return run(() -> {
-      isManualMode = true;
+      ArmConfig.isManualMode = true;
       motor.set(dutyCycle);
     }).finallyDo(() -> {
-      isManualMode = false;
+      ArmConfig.isManualMode = false;
       motor.set(0.0);
     });
   }
@@ -125,14 +109,14 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (!isManualMode) {
-      double pidOutput = pidController.calculate(getAngle(), setpoint);
+    if (!ArmConfig.isManualMode) {
+      double pidOutput = pidController.calculate(getAngle(), ArmConfig.setpoint);
       double ffOutput = feedforward.calculate(Math.toRadians(getAngle()), encoder.getVelocity());
       motor.setVoltage(pidOutput + ffOutput);
     }
 
     SmartDashboard.putNumber("Arm Angle (deg)", getAngle());
-    SmartDashboard.putNumber("Arm Target (deg)", setpoint);
+    SmartDashboard.putNumber("Arm Target (deg)", ArmConfig.setpoint);
     SmartDashboard.putBoolean("Arm At Target", isAtTarget());
   }
 
