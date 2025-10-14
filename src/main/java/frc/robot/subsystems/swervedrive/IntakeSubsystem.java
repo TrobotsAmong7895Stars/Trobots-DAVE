@@ -24,7 +24,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private Debouncer currentDebounce = new Debouncer(0.1, Debouncer.DebounceType.kRising);
 
   /** Creates a new ExampleSubsystem. */
-  public IntakeSubsystem() {
+  public IntakeSubsystem() {  
     intakeLeader = new SparkMax(10, MotorType.kBrushed);
 
     intakeFollower = new SparkMax(11, MotorType.kBrushed);
