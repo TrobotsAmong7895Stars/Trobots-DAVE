@@ -22,12 +22,15 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.swervedrive.alignment.AlignToReefTagHolonomic;
+import frc.robot.commands.swervedrive.alignment.AlignToReefTagRelative;
 import frc.robot.Constants.DASHButtons;
 import frc.robot.subsystems.swervedrive.IntakeSubsystem;
 import frc.robot.subsystems.swervedrive.ArmSubsystem;
 import frc.robot.subsystems.swervedrive.ClimberSubsystem;
 import frc.robot.subsystems.swervedrive.ElevatorSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 
 import static edu.wpi.first.units.Units.Degrees;
@@ -54,6 +57,7 @@ public class RobotContainer
   private final ClimberSubsystem climber = new ClimberSubsystem();
   private final ArmSubsystem arm = new ArmSubsystem();
   private final IntakeSubsystem intake = new IntakeSubsystem();
+  private final Vision vision = new Vision(drivebase::getPose, drivebase.field);
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -217,6 +221,8 @@ public class RobotContainer
       // driverJoystick.a().whileTrue(drivebase.aimAtTarget(Cameras.CENTER_CAM));
       // driverJoystick.button(4).whileTrue(drivebase.driveToPose(new Pose2d(3.405, 2.497, Rotation2d.fromDegrees(5.194))));
       driverJoystick.button(6).onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverJoystick.button(7).whileTrue(new AlignToReefTagHolonomic(false, drivebase, vision));
+      driverJoystick.button(8).whileTrue(new AlignToReefTagRelative(false, drivebase, vision));
       driverJoystick.button(5).whileTrue(drivebase.centerModulesCommand());
       driverJoystick.button(11).whileTrue(drivebase.sysIdAngleMotorCommand());
       driverJoystick.button(12).whileTrue(drivebase.sysIdDriveMotorCommand());

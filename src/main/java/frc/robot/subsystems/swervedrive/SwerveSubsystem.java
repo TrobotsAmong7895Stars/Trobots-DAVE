@@ -27,6 +27,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -68,6 +69,10 @@ public class SwerveSubsystem extends SubsystemBase
    * PhotonVision class to keep an accurate odometry.
    */
   private       Vision      vision;
+  /**
+   * Field object for visualizing robot pose on the dashboard.
+   */
+  public final Field2d field = new Field2d();
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -112,6 +117,8 @@ public class SwerveSubsystem extends SubsystemBase
     }
     setupPathPlanner();
     RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
+
+    field.setRobotPose(startingPose);
   }
 
   /**
@@ -127,6 +134,7 @@ public class SwerveSubsystem extends SubsystemBase
                                   Constants.MAX_SPEED,
                                   new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
                                              Rotation2d.fromDegrees(0)));
+    field.setRobotPose(getPose());
   }
 
   /**
@@ -140,6 +148,7 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
+    field.setRobotPose(getPose());
     // When vision is enabled we must manually update odometry in SwerveDrive
     if (visionDriveTest)
     {
@@ -233,7 +242,7 @@ public class SwerveSubsystem extends SubsystemBase
   {
 
     return run(() -> {
-      Optional<PhotonPipelineResult> resultO = camera.getBestResult();
+      Optional<PhotonPipelineResult> resultO = Cameras.CENTER_CAM.getBestResult();
       if (resultO.isPresent())
       {
         var result = resultO.get();
