@@ -390,7 +390,7 @@ public class Vision
     /**
      * Transform of the camera rotation and translation relative to the center of the robot
      */
-    private final Transform3d                  robotToCamTransform;
+    public final Transform3d                  robotToCamTransform;
     /**
      * Current standard deviations used.
      */

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -140,7 +141,7 @@ public class RobotContainer
 
     // L2
     NamedCommands.registerCommand("L2Height", elevator.setHeight(Meters.of(1.05)).withTimeout(3));
-    NamedCommands.registerCommand("L2Angle", arm.setAngle(Degrees.of(95)).withTimeout(3));
+    NamedCommands.registerCommand("L2Angle", arm.setAngle(Degrees.of(105)).withTimeout(3));
 
     // L3
     NamedCommands.registerCommand("L3Height", elevator.setHeight(Meters.of(0)).withTimeout(3));
@@ -152,7 +153,7 @@ public class RobotContainer
 
     // AL3
     NamedCommands.registerCommand("AL3Height", elevator.setHeight(Meters.of(1.7)).withTimeout(3));
-    NamedCommands.registerCommand("AL3Angle", arm.setAngle(Degrees.of(100)).withTimeout(3));
+    NamedCommands.registerCommand("AL3Angle", arm.setAngle(Degrees.of(110)).withTimeout(3));
   }
 
   /**
@@ -231,6 +232,8 @@ public class RobotContainer
       driverJoystick.button(3).onTrue((Commands.runOnce(drivebase::zeroGyro)));
       // driverJoystick.button(0).onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
       driverJoystick.button(4).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      driverJoystick.button(7).whileTrue(new AlignToReefTagHolonomic(false, drivebase, vision));
+      driverJoystick.button(8).whileTrue(new AlignToReefTagRelative(false, drivebase, vision));
       driverJoystick.povUp().whileTrue(climber.raiseClimber());
       driverJoystick.povDown().whileTrue(climber.lowerClimber());
       driverJoystick.button(2).onTrue(new ParallelCommandGroup(elevator.setHeight(Meters.of(0)), arm.setAngle(Degrees.of(0))));
@@ -246,102 +249,87 @@ public class RobotContainer
       DASH.button(DASHButtons.OUTTAKE).whileTrue(intake.outtakeCommand());
 
       // Coral Button
-      DASH.button(DASHButtons.CORAL)
-      .onTrue(
+      DASH.button(DASHButtons.CORAL).onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(45)).withTimeout(2),
+          arm.setAngle(Degrees.of(45)),
+          new WaitCommand(1),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(0)), 
-          arm.setAngle(Degrees.of(100))
-        )
-        )
+          arm.setAngle(Degrees.of(100))))
       );
 
+      
       // Algae Button
-      DASH.button(DASHButtons.ALGAE)
-      .onTrue(
+      DASH.button(DASHButtons.ALGAE).onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(45)).withTimeout(2),
+          arm.setAngle(Degrees.of(45)),
+          new WaitCommand(1),
         new ParallelCommandGroup(
-          elevator.setHeight(Meters.of(0.32)), 
-          arm.setAngle(Degrees.of(97))
-        )
-        )
+          elevator.setHeight(Meters.of(0.22)), 
+          arm.setAngle(Degrees.of(95))))
       );
 
       // Processor Button
-      DASH.button(DASHButtons.PROCESSOR)
-      .onTrue(
+      DASH.button(DASHButtons.PROCESSOR).onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(45)).withTimeout(2),
+          arm.setAngle(Degrees.of(45)),
+          new WaitCommand(1),
         new ParallelCommandGroup(
-          elevator.setHeight(Meters.of(0.62)), 
-          arm.setAngle(Degrees.of(100))
-        )
-        )
+          elevator.setHeight(Meters.of(0.63)), 
+          arm.setAngle(Degrees.of(100))))
       );
 
       // EB Button
       // DASH.button(DASHButtons.EB).onTrue(Commands.none());
 
       // L1
-      DASH.button(DASHButtons.L1)
-      .onTrue(
+      DASH.button(DASHButtons.L1).onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(45)).withTimeout(2),
+          arm.setAngle(Degrees.of(45)),
+          new WaitCommand(1),
         new ParallelCommandGroup(
-          elevator.setHeight(Meters.of(0.8)), 
-          arm.setAngle(Degrees.of(95))
-        )
-        )
+          elevator.setHeight(Meters.of(0.75)), 
+          arm.setAngle(Degrees.of(100))))
       );
 
       // L2
-      DASH.button(DASHButtons.L2)
-      .onTrue(
+      DASH.button(DASHButtons.L2).onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(45)).withTimeout(2),
+          arm.setAngle(Degrees.of(45)),
+          new WaitCommand(1),
         new ParallelCommandGroup(
-          elevator.setHeight(Meters.of(1.05)),   
-          arm.setAngle(Degrees.of(95))
-        )
-        )
+          elevator.setHeight(Meters.of(1.12)),   
+          arm.setAngle(Degrees.of(105))))
       );
       
       // L3
-      DASH.button(DASHButtons.L3)
-      .onTrue(
+      DASH.button(DASHButtons.L3).onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(45)).withTimeout(2),
+          arm.setAngle(Degrees.of(45)),
+          new WaitCommand(1),
         new ParallelCommandGroup(
-          elevator.setHeight(Meters.of(1.55)), 
-          arm.setAngle(Degrees.of(95))
-        )
-        )
+          elevator.setHeight(Meters.of(1.63)), 
+          arm.setAngle(Degrees.of(100))))
       );
 
       // AL2
-      DASH.button(DASHButtons.AL2)
-      .onTrue(
+      DASH.button(DASHButtons.AL2).onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(45)).withTimeout(2),
+          arm.setAngle(Degrees.of(45)),
+          new WaitCommand(1),
         new ParallelCommandGroup(
-          elevator.setHeight(Meters.of(1.35)), 
-          arm.setAngle(Degrees.of(105))
-        )
-        )
+          elevator.setHeight(Meters.of(1.25)), 
+          arm.setAngle(Degrees.of(100))))
       );
 
       // AL3
-      DASH.button(DASHButtons.AL3)
-      .onTrue(
+      DASH.button(DASHButtons.AL3).onTrue(
         new SequentialCommandGroup(
-          arm.setAngle(Degrees.of(45)).withTimeout(2),
+          arm.setAngle(Degrees.of(45)),
+          new WaitCommand(1),
         new ParallelCommandGroup(
           elevator.setHeight(Meters.of(1.7)), 
-          arm.setAngle(Degrees.of(100))
-        )   
-        )
+          arm.setAngle(Degrees.of(100))))
       );
 
     }

@@ -41,10 +41,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   // Mechanism Circumference is the distance traveled by each mechanism rotation converting rotations to meters.
   .withMechanismCircumference(Meters.of(Inches.of(2.638).in(Meters) * 22))
   // Feedback Constants (PID Constants)
-  .withClosedLoopController(0.0042004, 0, 0, MetersPerSecond.of(1), MetersPerSecondPerSecond.of(0.75))
+  .withClosedLoopController(0.0039912, 0, 0, MetersPerSecond.of(1), MetersPerSecondPerSecond.of(0.75))
   .withSimClosedLoopController(4, 0, 0, MetersPerSecond.of(0.5), MetersPerSecondPerSecond.of(0.5))
   // Feedforward Constants
-  .withFeedforward(new ElevatorFeedforward(0.24395, 0.42824, 11.372))
+  .withFeedforward(new ElevatorFeedforward(0.17157, 0.4192, 11.766))
   .withSimFeedforward(new ElevatorFeedforward(0, 0, 0))
   // Telemetry name and verbosity level
   .withTelemetry("ElevatorMotor", TelemetryVerbosity.HIGH)

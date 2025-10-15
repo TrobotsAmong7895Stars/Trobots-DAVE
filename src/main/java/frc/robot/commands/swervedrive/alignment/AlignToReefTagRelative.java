@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.Constants.ReefAlignment;
 import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
@@ -17,7 +18,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.geometry.Transform3d;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+
 public class AlignToReefTagRelative extends Command {
   private final PIDController xController, yController, rotController;
   private final boolean isRightScore;
@@ -86,9 +87,10 @@ public class AlignToReefTagRelative extends Command {
         SmartDashboard.putNumber("x", x);
 
         double xSpeed = xController.calculate(x);
-        SmartDashboard.putNumber("xspeed", xSpeed);
         double ySpeed = -yController.calculate(y);
         double rotValue = -rotController.calculate(rot);
+
+        SmartDashboard.putNumber("xspeed", xSpeed);
 
         drivebase.drive(new Translation2d(xSpeed, ySpeed), rotValue, false);
 

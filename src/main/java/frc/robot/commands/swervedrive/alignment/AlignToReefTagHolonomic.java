@@ -14,6 +14,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.Constants.ReefAlignment;
 import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
@@ -47,19 +48,22 @@ public class AlignToReefTagHolonomic extends Command {
     PIDController yController = new PIDController(ReefAlignment.Y_REEF_ALIGNMENT_P, 0.0, 0);
     ProfiledPIDController thetaController = new ProfiledPIDController(
       ReefAlignment.ROT_REEF_ALIGNMENT_P, 0.0, 0,
-        new TrapezoidProfile.Constraints(6.28, 3.14)); // Max angular velocity and acceleration
+        new TrapezoidProfile.Constraints(3.5, 2.5)); // Max angular velocity and acceleration
 
     controller = new HolonomicDriveController(xController, yController, thetaController);
+    dontSeeTagTimer = new Timer();
+    stopTimer = new Timer();
+
     addRequirements(drivebase);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    this.stopTimer = new Timer();
-    this.stopTimer.start();
-    this.dontSeeTagTimer = new Timer();
-    this.dontSeeTagTimer.start();
+    stopTimer.reset();
+    stopTimer.start();
+    dontSeeTagTimer.reset();
+    dontSeeTagTimer.start();
 
     PhotonPipelineResult result = Cameras.CENTER_CAM.getBestResult().orElse(null);
     if (result != null && result.hasTargets()) {
@@ -75,9 +79,14 @@ public class AlignToReefTagHolonomic extends Command {
       this.dontSeeTagTimer.reset();
 
       Transform3d camToTarget = result.getBestTarget().getBestCameraToTarget();
-      double x = camToTarget.getX(); // Forward/backward
-      double y = camToTarget.getY(); // Left/right
-      double rot = camToTarget.getRotation().getZ(); // Yaw
+      Transform3d robotToCam = Cameras.CENTER_CAM.robotToCamTransform; // From Vision enum
+      Transform3d tagToCam = camToTarget.inverse();
+      Transform3d cameraToRobot = robotToCam.inverse();
+      Transform3d tagToRobot = tagToCam.plus(cameraToRobot);
+
+      double x = tagToRobot.getX(); // Forward/Backward
+      double y = tagToRobot.getY(); // Left/Right
+      double rot = tagToRobot.getRotation().getZ(); // Yaw
 
       SmartDashboard.putNumber("x", x);
 
@@ -88,12 +97,13 @@ public class AlignToReefTagHolonomic extends Command {
           new Rotation2d(ReefAlignment.ROT_SETPOINT_REEF_ALIGNMENT));
 
       ChassisSpeeds speeds = controller.calculate(currentPose, goalPose, 0.0, goalPose.getRotation());
+
       drivebase.drive(
           new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond),
           speeds.omegaRadiansPerSecond,
           false);
 
-      if (controller.atReference()) {
+      if (!controller.atReference()) {
         stopTimer.reset();
       }
     } else {
