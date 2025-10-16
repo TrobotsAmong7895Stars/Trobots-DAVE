@@ -234,8 +234,15 @@ public class RobotContainer
       driverJoystick.button(4).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverJoystick.button(7).whileTrue(new AlignToReefTagHolonomic(false, drivebase, vision));
       driverJoystick.button(8).whileTrue(new AlignToReefTagRelative(false, drivebase, vision));
-      driverJoystick.povUp().whileTrue(climber.raiseClimber());
-      driverJoystick.povDown().whileTrue(climber.lowerClimber());
+
+      driverJoystick.povUp().onTrue(climber.brake.disengageAllCommand());
+      driverJoystick.povUp().onFalse(new SequentialCommandGroup(new WaitCommand(0.2), climber.brake.engageAllCommand()));
+      driverJoystick.povUp().whileTrue(new SequentialCommandGroup(new WaitCommand(0.2), climber.raiseClimber()));
+  
+      driverJoystick.povDown().onTrue(climber.brake.disengageAllCommand());
+      driverJoystick.povDown().onFalse(new SequentialCommandGroup(new WaitCommand(0.2), climber.brake.engageAllCommand()));
+      driverJoystick.povDown().whileTrue(new SequentialCommandGroup(new WaitCommand(0.2), climber.lowerClimber()));
+
       driverJoystick.button(2).onTrue(new ParallelCommandGroup(elevator.setHeight(Meters.of(0)), arm.setAngle(Degrees.of(0))));
       
       // DASH Joystick manually moves both the elevator and the arm

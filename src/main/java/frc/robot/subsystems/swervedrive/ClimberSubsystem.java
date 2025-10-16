@@ -30,7 +30,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
     globalConfig
       .smartCurrentLimit(40)
-      .idleMode(IdleMode.kBrake);
+      .idleMode(IdleMode.kBrake)
+      .openLoopRampRate(0.3);
 
     followerConfig
       .apply(globalConfig)
@@ -41,7 +42,7 @@ public class ClimberSubsystem extends SubsystemBase {
     climberFollower.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  private final BrakeSubsystem brake = new BrakeSubsystem(
+  public final BrakeSubsystem brake = new BrakeSubsystem(
     1, 0.0, 35.0,
     2, 160.0, 130.0
   );
@@ -56,27 +57,13 @@ public class ClimberSubsystem extends SubsystemBase {
 
 
   public Command raiseClimber() {
-    Command disengageIfNeeded = Commands.either(
-      brake.disengageAllCommand(),
-      Commands.none(),
-      () -> !brake.areAllBrakesEngaged()
-    );
-    return disengageIfNeeded
-      .andThen(Commands.run(() -> this.setSpeed(1.0), this))
-      .andThen(brake.engageAllCommand())
-      .finallyDo(() -> this.stop());
+    return Commands.run(() -> this.setSpeed(1.0), this)
+        .finallyDo(() -> this.stop());
   }
 
   public Command lowerClimber() {
-    Command disengageIfNeeded = Commands.either(
-      brake.disengageAllCommand(),
-      Commands.none(),
-      () -> !brake.areAllBrakesEngaged()
-    );
-    return disengageIfNeeded
-      .andThen(Commands.run(() -> this.setSpeed(-1.0), this))
-      .andThen(brake.engageAllCommand())
-      .finallyDo(() -> this.stop());
+    return Commands.run(() -> this.setSpeed(-1.0), this)
+        .finallyDo(() -> this.stop());
   }
 
   @Override
